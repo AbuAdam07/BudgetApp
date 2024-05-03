@@ -20,9 +20,9 @@
         <p class="card-text"><textarea class="form-control options" id="validationTextarea" placeholder="Options" required></textarea></p>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item"><textarea class="form-control options" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
-        <li class="list-group-item"><textarea class="form-control options" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
-        <li class="list-group-item"><textarea class="form-control options" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
+        <li class="list-group-item"><textarea class="form-control options text_num" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
+        <li class="list-group-item"><textarea class="form-control options text_num" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
+        <li class="list-group-item"><textarea class="form-control options text_num" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
       </ul>
       <button type="button" class="btn btn-secondary add_btn">Add more...</button>
       <div class="card-footer down">
@@ -39,9 +39,9 @@
       <p class="card-text"><textarea class="form-control options" id="validationTextarea" placeholder="Options" required></textarea></p>
     </div>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item"><textarea class="form-control options" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
-      <li class="list-group-item"><textarea class="form-control options" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
-      <li class="list-group-item"><textarea class="form-control options" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
+      <li class="list-group-item"><textarea class="form-control options text_num" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
+      <li class="list-group-item"><textarea class="form-control options text_num" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
+      <li class="list-group-item"><textarea class="form-control options text_num" id="validationTextarea" placeholder="Tell me your cash" required></textarea></li>
     </ul>
     <button type="button" class="btn btn-secondary add_btn">Add more...</button>
     <div class="card-footer down">
@@ -57,5 +57,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="vue.js>"></script>
     <script src="main.js"></script>
+    <script>
+const textareas = document.querySelectorAll('.text_num')
+
+textareas.forEach((textarea) => {
+  textarea.addEventListener('keypress', (event) => {
+    const keyCode = event.keyCode || event.which
+
+    // Allow only numbers and backspace, delete, and tab keys
+    if (!(keyCode >= 48 && keyCode <= 57) && keyCode!== 8 && keyCode!== 9 && keyCode!== 46) {
+      event.preventDefault()
+    }
+  })
+})
+    </script>
 </body>
 </html>
