@@ -51,7 +51,7 @@
   <button type="button" class="btn btn-secondary add_btn2">Add more...</button>
 </div>
 </div>
-<h1 class="first" id="total_result">Total result :</h1>
+<h1 class="first" id="total_result">Total result : <span id="difference">0</span></h1>
     <!-- в приложении изначально должно быть два ряда карточек, верхие это доход, а нижние это расход. изначально на стартовой странице должно быть по одной карточке дохода и расхода, но пользователь может добавить при нажатии на кнопку ещё карточки в доход или расход. в самих карточка должна быть возможность менять их название и вносить цифры в содержание. содержание должно суммироваться и показывать сумму каждой карточки в ней в нижней строке. а все карточки вместе от суммы всех карточек доходов должна отниматься сумма всех карточек расходов и показываться отдельно на главном экран, с подсвечиванием, если число положительное, то зелёным цветом, если отрицательное, то красным, если 0, то серым -->
   </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -71,38 +71,110 @@ textareas.forEach((textarea) => {
   })
 })
 
-function updateTotal(income_inputs, total, totalElementId) {
-  income_inputs.forEach((input) => {
-    let previousValue = input.value
+let incomeTotals = [];
+let outcomeTotals = [];
 
-    input.addEventListener('input', () => {
-      const value = parseFloat(input.value) || 0
+function updateTotalsAndPerformCalculations(inputs, totals, totalElementId) {
+  inputs.forEach((input) => {
+    let previousValue = input.value;
 
-      if (value!== previousValue){
-        setTimeout(() => {
-          total += value - previousValue
-          previousValue = value
-          document.getElementById(totalElementId).textContent = `Total: ${total}`
-        }, 3000)
+    input.addEventListener('input', debounce(() => {
+      const value = parseFloat(input.value) || 0;
+
+      if (value!== previousValue) {
+        totals += value - previousValue;
+        previousValue = value;
+        const totalElement = document.getElementById(totalElementId);
+        if (totalElement) {
+          totalElement.textContent = `Total: ${totals}`;
+        }
+        // store the entered value in the corresponding totals array
+        totals === total1? incomeTotals.push(value) : outcomeTotals.push(value);
       }
-    })
-  })
+    }, 300));
+  });
 }
 
-const income_inputs1 = document.querySelectorAll('.income1')
-let total1 = 0
+function performFurtherCalculations() {
+  const sum1 = incomeTotals.reduce((acc, value) => acc + value, 0);
+  const sum2 = outcomeTotals.reduce((acc, value) => acc + value, 0);
+  // perform further calculations with sum1 and sum2
+}
 
-updateTotal(income_inputs1, total1, 'total_income1')
+const income_inputs1 = document.querySelectorAll('.income1');
+let total1 = 0;
 
-const outcome_inputs1 = document.querySelectorAll('.outcome1')
-let total2 = 0
+updateTotalsAndPerformCalculations(income_inputs1, total1, 'total_income1');
 
-updateTotal(outcome_inputs1, total2, 'total_outcome1')
+const outcome_inputs1 = document.querySelectorAll('.outcome1');
+let total2 = 0;
 
-// setTimeout(() => {
-//     const result = parseFloat('total_income1')
-//     document.getElementById('total_result').textContent = `Total result: ${result}`
-//   }, 3000)
+updateTotalsAndPerformCalculations(outcome_inputs1, total2, 'total_outcome1');
+
+// debounce function
+function debounce(fn, delay) {
+  let timeoutId;
+  return function(...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const income_inputs1 = document.querySelectorAll('.income1');
+  const outcome_inputs1 = document.querySelectorAll('.outcome1');
+  let totalIncome = 0;
+  let totalOutcome = 0;
+  let isTyping = false;
+
+    const updateConsole = () => {
+    const difference = totalIncome - totalOutcome;
+    console.log(debounce(`Difference: ${difference}`,2000));
+    isTyping = false;
+  };
+
+  const debouncedUpdateConsole = debounce(updateConsole, 2000);
+
+  income_inputs1.forEach((element) => {
+    element.addEventListener('change', () => {
+      const value = Number(element.value);
+      if (!isNaN(value)) {
+        totalIncome += value;
+      } else {
+        totalIncome -= totalIncome - value; // remove the last added value
+      }
+      console.log(debounce(`Total income: ${totalIncome}`), 2000);
+      checkTyping();
+    });
+  });
+
+  outcome_inputs1.forEach((element) => {
+    element.addEventListener('change', () => {
+      const value = Number(element.value);
+      if (!isNaN(value)) {
+        totalOutcome += value;
+      } else {
+        totalOutcome -= totalOutcome - value; // remove the last added value
+      }
+      console.log(debounce(`Total outcome: ${totalOutcome}`),2000);
+      checkTyping();
+    });
+  });
+
+  function checkTyping() {
+    if (!isTyping) {
+      isTyping = true;
+      setTimeout(() => {
+        const difference = totalIncome - totalOutcome;
+        document.getElementById("difference").innerText = difference;
+        isTyping = false;
+      }, 1000);
+    }
+  }
+});
+
 
 
     </script>
